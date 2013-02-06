@@ -185,6 +185,9 @@ reset packages or output details about compressed packages from the command line
 >   ),
 > ```
 
+> **Note 2:** You need write permissions from the command line to the `state.bin` file in
+> your `protected/runtime` directory, if you want to reset packages.
+
 Compress a package:
 
     ./yiic packages compress --name=<packagename>
