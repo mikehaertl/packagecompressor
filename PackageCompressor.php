@@ -5,7 +5,7 @@
  * A Javascript and CSS compressor based on Yii's package system.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 1.0.0
+ * @version 1.0.1-dev
  */
 class PackageCompressor extends CClientScript
 {

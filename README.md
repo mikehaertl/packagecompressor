@@ -174,15 +174,25 @@ reset packages or output details about compressed packages from the command line
 > **Note:** It's important that the package configuration from your web configuration is
 > also available in your console config. That means, you need have the same `clientScript`
 > configuration in your `console.php`. You may want to use a shared include file to do so.
-> If you want to compress from the command-line you also need to configure an asset manager.
+> If you want to compress from the command-line you also need to configure an asset manager
+> and an alias for `webroot`. You also need to fix a problem with the `request` component
+> which returns '.' as baseUrl on console:
 >
 > ```php
 > <?php
->   'assetManager'=>array(
->       'class'     =>'CAssetManager',
->       'basePath'  =>realpath(__DIR__.'/../../assets'),
->       'baseUrl'   =>'/assets',
+>   'aliases' => array(
+>       'webroot' => realpath(__DIR_.'/../..'),
 >   ),
+>   'components' =>
+>       'assetManager'=>array(
+>           'class'     =>'CAssetManager',
+>           'basePath'  =>realpath(__DIR__.'/../../assets'),
+>           'baseUrl'   =>'/assets',
+>       ),
+>       'request' => array(
+>           'baseUrl' => '',
+>       ),
+>       //...
 > ```
 
 > **Note 2:** You need write permissions from the command line to the `state.bin` file in

@@ -6,7 +6,7 @@ Yii::import('application.components.ClientScriptPackageCompressor');
  * This is a maintenance command for the ClientScriptPackageCompressor component.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 1.1.6
+ * @version 1.0.1-dev
  */
 class PackagesCommand extends CConsoleCommand
 {
