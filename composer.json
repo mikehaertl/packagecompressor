@@ -1,0 +1,17 @@
+{
+    "name": "mikehaertl/packagecompressor",
+    "description": "packagecompressor is a Yii extension that can compress Javascript/CSS and is based on Yii's package system",
+    "keywords": ["yii","javascript","css","compress","minify"],
+    "homepage": "https://github.com/mikehaertl/packagecompressor",
+    "type": "yii-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Haertl",
+            "email": "haertl.mike@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.0.0"
+    }
+}
