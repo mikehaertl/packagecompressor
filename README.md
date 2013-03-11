@@ -244,6 +244,34 @@ Now you can register this CSS package with
 
 > **Note:** Here the web server process must have write permissions to the CSS folder.
 
+# Advanced example: media support for CSS
+
+CSS packages can contain a `media` specification which will be used when the package
+is registered.
+
+```php
+<?php
+return array(
+    // ...
+    'main-css' => array(
+        'baseUrl' => 'css',
+        'media' => 'screen',
+        'css' => array(
+            'main.css',
+            'forum.css',
+        ),
+    ),
+    'main-css' => array(
+        'baseUrl' => 'css',
+        'media' => 'print',
+        'css' => array(
+            'print.css',
+        ),
+    ),
+    // ...
+)
+```
+
 # Advanced example: jQUery from CDN
 
 If you want to use a CDN for jQuery you can configure it just as you would without
@@ -273,3 +301,16 @@ return array(
     // ...
 ),
 ```
+# Changelog
+
+### 1.0.3
+
+* Add `media` support for CSS.
+
+### 1.0.2
+
+* Add [composer](http://getcomposer.org/) support
+
+### 1.0.0
+
+* Initial version

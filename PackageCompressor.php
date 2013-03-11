@@ -5,7 +5,7 @@
  * A Javascript and CSS compressor based on Yii's package system.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 1.0.2
+ * @version 1.0.3
  */
 class PackageCompressor extends CClientScript
 {
@@ -152,6 +152,7 @@ class PackageCompressor extends CClientScript
                 'file'  => $destFile,
                 'files' => $files,
                 'urls'  => $urls,
+                'media' => isset($this->packages[$name]['media']) ? $this->packages[$name]['media'] : '',
             );
             unlink($fileName);
         }
@@ -478,7 +479,7 @@ class PackageCompressor extends CClientScript
             $urls = $this->cssFiles = array();
 
             foreach($package['css']['urls'] as $url)
-                $this->cssFiles[$url] = '';
+                $this->cssFiles[$url] = $package['css']['media'];
 
             foreach($cssFiles as $url => $media)
                 $this->cssFiles[$url] = $media;
