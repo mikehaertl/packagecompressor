@@ -303,6 +303,10 @@ return array(
 ```
 # Changelog
 
+### 1.0.4
+
+* Fix external URLs that don't have a protocol like `//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js`
+
 ### 1.0.3
 
 * Add `media` support for CSS.

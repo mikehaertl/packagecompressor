@@ -5,7 +5,7 @@
  * A Javascript and CSS compressor based on Yii's package system.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 1.0.3
+ * @version 1.0.4
  */
 class PackageCompressor extends CClientScript
 {
@@ -96,7 +96,7 @@ class PackageCompressor extends CClientScript
             $scripts    = array();
             $urls       = array();
             foreach($this->scriptFiles[$this->coreScriptPosition] as $script)
-                if (strtolower(substr($script,0,4))==='http') // Exclude external scripts
+                if (strtolower(substr($script,0,4))==='http' || substr($script,0,2)==='//') // Exclude external scripts
                     $urls[] = $script;
                 else
                     $scripts[] = $basePath.$script;   // '/www/root'.'/sub/js/some.js'
