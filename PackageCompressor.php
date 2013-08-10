@@ -408,7 +408,7 @@ class PackageCompressor extends CClientScript
 
         $jar = Yii::getPathOfAlias('ext.packagecompressor.yuicompressor').DIRECTORY_SEPARATOR.self::YUI_COMPRESSOR_JAR;
         // See http://developer.yahoo.com/yui/compressor/
-        $command = sprintf("java -jar '%s' --type %s -o '%s' '%s'",$jar,$type,$outFile,$inFile);
+        $command = sprintf("%s -jar %s --type %s -o %s %s",escapeshellarg($this->javaBin),escapeshellarg($jar),$type,escapeshellarg($outFile),escapeshellarg($inFile));
 
         if($this->combineOnly)
             copy($inFile,$outFile);
