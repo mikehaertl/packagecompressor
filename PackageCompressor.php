@@ -20,6 +20,14 @@ class PackageCompressor extends CClientScript
     public $combineOnly = false;
 
     /**
+     * @var bool wheter to copy images from combined CSS files to output directory
+     * Only effective when $enableCompression is set to "true"
+     *
+     * Note: Workaround for https://github.com/yiisoft/yii/issues/1033
+     */
+    public $copyCssImages = false;
+
+    /**
      * If this is enabled, during compression all other requests will wait until the compressing
      * process has completed. If disabled, the uncompressed files will be delivered for these
      * requests. This should prevent the thundering herd problem.
@@ -146,6 +154,15 @@ class PackageCompressor extends CClientScript
             {
                 $urls[] = $am->publish($fileName,true);    // URL to compressed file
                 $destFile = $am->getPublishedPath($fileName,true);
+            }
+
+            // copy images
+            if ($this->copyCssImages) foreach (array_keys($this->cssFiles) as $file) {
+                CFileHelper::copyDirectory(
+                    dirname($basePath . $file),
+                    dirname($destFile),
+                    array('fileTypes' => array('jpg', 'png', 'gif'))
+                );
             }
 
             $info['css'] = array(
