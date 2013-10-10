@@ -29,6 +29,11 @@ class PackageCompressor extends CClientScript
     public $blockDuringCompression = true;
 
     /**
+     * @var bool whether to add a fingerprint to CSS image urls.
+     */
+    public $enableCssImageFingerPrinting = false;
+
+    /**
      * @var string name or path of/to the JAVA executable. Default is 'java'.
      */
     public $javaBin = 'java';
@@ -360,21 +365,30 @@ class PackageCompressor extends CClientScript
     /**
      * Combine the set of given text files into one file
      *
+     * For js files, we add a semicolon to the end, in case the file forgot it, e.g. jquery.history.js in the yii repo.
+     *
      * @param string $name of package
-     * @param array $files list of files to combine (full path)
-     * @param bool $jsSafe wether to append a semicolon after every file
+     * @param string $type of package, either js or css
+     * @param array  $files List of files to combine (full path)
      * @return string full path name of combined file
      */
-    private function combineFiles($name,$files,$jsSafe=false)
+    private function combineFiles($name,$type,$files)
     {
         $fileName = tempnam(Yii::app()->runtimePath,'combined_'.$name);
-        foreach($files as $f)
-            if(!file_put_contents($fileName, file_get_contents($f).($jsSafe ? ';':'')."\n", FILE_APPEND))
+
+        foreach($files as $f) {
+            if($type == 'css' && $this->enableCssImageFingerPrinting)
+                $fileContents = $this->addCssImageFingerPrints($f);
+            else
+                $fileContents = file_get_contents($f);
+
+            if(!file_put_contents($fileName, $fileContents.($type==='js'?';':'')."\n", FILE_APPEND))
                 throw new CException(sprintf(
-                    'Could not combine combine file "%s" into "%s"',
+                    'Could not combine file "%s" into "%s"',
                     $f,
                     $fileName
                 ));
+        }
 
         return $fileName;
     }
@@ -396,7 +410,7 @@ class PackageCompressor extends CClientScript
             implode(",\n",$files)
         ),'application.components.packagecompressor');
 
-        $inFile = $this->combineFiles($name,$files,$type==='js');
+        $inFile = $this->combineFiles($name,$type,$files);
         $outFile = sprintf(
             '%s/%s_pkg_%s_%s.%s',
             Yii::app()->runtimePath,
@@ -497,7 +511,7 @@ class PackageCompressor extends CClientScript
     }
 
     /**
-     * Remove any registered core script and packages if we have it in the package to prevent publishing
+     * Remove any registered core scripts and packages if we have it in the package to prevent publishing
      *
      * @param string $name of package
      */
@@ -544,5 +558,55 @@ class PackageCompressor extends CClientScript
             unset($this->_pd[$name]);
 
         $this->savePackageData();
+    }
+
+    /**
+     * Attempt to add a fingerprint to any image url found in the input file
+     *
+     * Example CSS that we want to match:
+     *   background: url('/images/stars/star.png') no-repeat 0px 0px;
+     *
+     * Resulting image file that we want to get a fingerprint for: /images/stars/star.png;
+     *
+     * Notes:
+     *  A) Cope with ' or " or no string encloser.
+     *  B) Only modify local assets, i.e. not apsolute urls.
+     *  C) Only modify jpg|jpeg|gif|png assets.
+     *  D) Don't modify assets that already have a fingerprint
+     *
+     * @param String $fileName Full file name of a CSS file
+     * @return string Modified CSS text
+     */
+    private function addCssImageFingerPrints($fileName)
+    {
+        $webRoot = realpath(Yii::getPathOfAlias('webroot'));
+
+        return preg_replace_callback(
+            '/url\([\'\"]?(.*?\.(jpg|jpeg|gif|png))[\'\"]?\)/',
+            function($matches) use ($fileName,$webRoot)
+            {
+                $imageURL = $matches[1];
+
+                if (preg_match('/^(https?:)?\/\//', $imageURL))
+                    return $matches[0]; // We don't fingerprint absolute urls
+
+                // image urls that start with a / are relative to the webroot, otherwise they are relative to the url of the CSS file.
+                $imageFile = ( $imageURL[0]==='/' ? $webRoot : dirname($fileName).'/' ) . $imageURL;
+
+                if (file_exists($imageFile))
+                    return 'url(\''.$imageURL.'?'.substr(md5_file($imageFile),0,8).'\')';
+
+                // We won't always find the image, e.g. there might be a mod_rewrite rule in play.
+                YII_DEBUG && Yii::trace(
+                    sprintf("Unable to find css image '%s' on disk. Css File: '%s'. CSS: %s.",
+                        $imageFile,
+                        $fileName,
+                        $matches[0]),
+                    'application.components.packagecompressor'
+                );
+                return $matches[0];
+            },
+            file_get_contents($fileName)
+        );
     }
 }
