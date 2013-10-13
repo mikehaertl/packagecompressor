@@ -20,9 +20,12 @@ class PackageCompressor extends CClientScript
     public $combineOnly = false;
 
     /**
-     * @var bool wheter to copy images from combined CSS files to output directory
      * Only effective when $enableCompression is set to "true"
      *
+     * @var bool wheter to rewrite URLs in CSS files to an absolute path before combining
+     */
+    public $rewriteCssUris = false;
+
      * Note: Workaround for https://github.com/yiisoft/yii/issues/1033
      */
     public $copyCssImages = false;
@@ -92,7 +95,7 @@ class PackageCompressor extends CClientScript
 
         $info       = array();
         $am         = Yii::app()->assetManager;
-        $basePath   = Yii::getPathOfAlias('webroot');
+        $basePath   = realpath(Yii::getPathOfAlias('webroot'));
 
         // /www/root/sub -> /www/root   (baseUrl=/sub)
         if(($baseUrl = Yii::app()->request->baseUrl)!=='')
@@ -134,8 +137,17 @@ class PackageCompressor extends CClientScript
         {
             $files  = array();
             $urls   = array();
-            foreach(array_keys($this->cssFiles) as $file)
-                $files[] = $basePath.$file;
+
+            foreach(array_keys($this->cssFiles) as $file) {
+                if ($this->rewriteCssUris) {
+                    $inFile = $basePath.$file;
+                    $outFile = $basePath.$file.'-rewrite.css';
+                    file_put_contents($outFile, Minify_CSS_UriRewriter::rewrite(file_get_contents($inFile), dirname($inFile), $basePath));
+                } else {
+                    $outFile = $basePath.$file;
+                }
+                $files[] = $outFile;
+            }
 
             $fileName = $this->compressFiles($name,'css',$files);
             if(isset($this->packages[$name]['baseUrl']))
