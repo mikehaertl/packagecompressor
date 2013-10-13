@@ -26,10 +26,6 @@ class PackageCompressor extends CClientScript
      */
     public $rewriteCssUris = false;
 
-     * Note: Workaround for https://github.com/yiisoft/yii/issues/1033
-     */
-    public $copyCssImages = false;
-
     /**
      * If this is enabled, during compression all other requests will wait until the compressing
      * process has completed. If disabled, the uncompressed files will be delivered for these
