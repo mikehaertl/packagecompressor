@@ -164,15 +164,6 @@ class PackageCompressor extends CClientScript
                 $destFile = $am->getPublishedPath($fileName,true);
             }
 
-            // copy images
-            if ($this->copyCssImages) foreach (array_keys($this->cssFiles) as $file) {
-                CFileHelper::copyDirectory(
-                    dirname($basePath . $file),
-                    dirname($destFile),
-                    array('fileTypes' => array('jpg', 'png', 'gif'))
-                );
-            }
-
             $info['css'] = array(
                 'file'  => $destFile,
                 'files' => $files,
