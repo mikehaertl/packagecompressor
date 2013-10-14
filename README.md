@@ -37,7 +37,7 @@ and want to cluster them into a couple of minified package files.
 > Note: You can even include Yii's [core scripts](https://github.com/yiisoft/yii/blob/1.1.13/framework/web/js/packages.php)
 > in a package. Unfortunately some Zii widgets like `CListView` and `CGridView` still don't
 > use the package system packages. But this will hopefully [be fixed](https://github.com/yiisoft/yii/issues/1033)
-> in Yii 1.1.14.
+> in Yii 1.1.15.
 
 # Basic example
 
@@ -154,6 +154,7 @@ configuration options, which you can set in your `main.php` config file:
 
  *  `enableCompression`: Wether compression should be enabled at all. Default is `true`.
     It's recommended to turn this off during development.
+*  `enableCssImageFingerPrinting`: Whether to enable automatic fingerprinting on CSS images, e.g. to add `?acd4gd3sz` based on the md5 hash of the image file.
  *  `combineOnly`: Wether all files should only be combined but not compressed. Default is `false`.
     This is very useful to debug packaging issues.
  *  `blockDuringCompression`: Wether other requests should pause during compression.
