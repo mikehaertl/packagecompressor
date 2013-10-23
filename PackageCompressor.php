@@ -20,11 +20,6 @@ class PackageCompressor extends CClientScript
     public $combineOnly = false;
 
     /**
-     * @var asset-files mapping
-     * Files defined in this array (same format as $scriptMap) are NOT remapped before package compression.
-     * You can use this parameter to override the client-script registration of files which are published as an asset, 
-     * but also defined in a package. Example: Files set to false are included in packages, but not stand-alone.
-    /**
      * Files defined in this array ('foo.js','bar.js') are available for package compression but not registered as a
      * stand-alone file.
      * You can use this parameter for example to override the client-script registration of files which are already
@@ -240,7 +235,8 @@ class PackageCompressor extends CClientScript
 
         $this->renderCoreScripts();
 
-        // merge scripts from assetsScriptMap, if compression is enabled, since the files have been bundles into packages
+        // Merge scripts from `blockedScripts` if compression is enabled,
+        // since it is assumed the files have been bundled into packages or handled elsewhere.
         if ($this->enableCompression && $this->blockedScripts!==array()) {
             foreach($this->blockedScripts AS $script) {
                 $this->scriptMap[$script] = false;
