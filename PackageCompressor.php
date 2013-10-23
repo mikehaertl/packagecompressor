@@ -7,6 +7,9 @@
  * @author Michael Härtl <haertl.mike@gmail.com>
  * @version 1.0.4
  */
+
+Yii::setPathOfAlias('_packagecompressor', dirname(__FILE__));
+
 class PackageCompressor extends CClientScript
 {
     /**
@@ -347,7 +350,7 @@ class PackageCompressor extends CClientScript
     {
         if($this->_mutex===null)
             $this->_mutex = Yii::createComponent(array(
-                'class'     => 'ext.packagecompressor.EMutex',
+                'class'     => '_packagecompressor.EMutex',
                 'mutexFile' => Yii::app()->runtimePath.'/packagecompressor_mutex.bin',
             ));
 
@@ -420,7 +423,7 @@ class PackageCompressor extends CClientScript
             $type
         );
 
-        $jar = Yii::getPathOfAlias('ext.packagecompressor.yuicompressor').DIRECTORY_SEPARATOR.self::YUI_COMPRESSOR_JAR;
+        $jar = Yii::getPathOfAlias('_packagecompressor.yuicompressor').DIRECTORY_SEPARATOR.self::YUI_COMPRESSOR_JAR;
         // See http://developer.yahoo.com/yui/compressor/
         $command = sprintf("%s -jar %s --type %s -o %s %s",escapeshellarg($this->javaBin),escapeshellarg($jar),$type,escapeshellarg($outFile),escapeshellarg($inFile));
 
