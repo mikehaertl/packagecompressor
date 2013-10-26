@@ -302,6 +302,11 @@ return array(
     // ...
 ),
 ```
+
+# Known Problems and Limitations
+
+* PackageCompressor is not compatible with an absolute `baseUrl` (eg. CDN Hosting) in Yii's assetManager
+
 # Changelog
 
 ### 1.0.4
