@@ -182,7 +182,7 @@ reset packages or output details about compressed packages from the command line
 > ```php
 > <?php
 >   'aliases' => array(
->       'webroot' => realpath(__DIR_.'/../..'),
+>       'webroot' => realpath(__DIR__.'/../..'),
 >   ),
 >   'components' =>
 >       'assetManager'=>array(
