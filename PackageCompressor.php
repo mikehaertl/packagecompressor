@@ -23,6 +23,16 @@ class PackageCompressor extends CClientScript
     public $combineOnly = false;
 
     /**
+     * Files defined in this array ('foo.js','bar.js') are available for package compression but not registered as a
+     * stand-alone file.
+     * You can use this parameter for example to override the client-script registration of files which are already
+     * published as an asset.
+     *
+     * @var blocked script files for clientscript registration
+     */
+    public $blockedScripts = array();
+
+    /**
      * If this is enabled, during compression all other requests will wait until the compressing
      * process has completed. If disabled, the uncompressed files will be delivered for these
      * requests. This should prevent the thundering herd problem.
@@ -233,6 +243,13 @@ class PackageCompressor extends CClientScript
 
         $this->renderCoreScripts();
 
+        // Merge scripts from `blockedScripts` if compression is enabled,
+        // since it is assumed the files have been bundled into packages or handled elsewhere.
+        if ($this->enableCompression && $this->blockedScripts!==array()) {
+            foreach($this->blockedScripts AS $script) {
+                $this->scriptMap[$script] = false;
+            }
+        }
         if(!empty($this->scriptMap))
             $this->remapScripts();
 
