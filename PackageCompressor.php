@@ -23,6 +23,13 @@ class PackageCompressor extends CClientScript
     public $combineOnly = false;
 
     /**
+     * Only effective when $enableCompression is set to "true"
+     *
+     * @var bool wheter to rewrite URLs in CSS files to an absolute path before combining
+     */
+    public $rewriteCssUris = false;
+
+    /**
      * If this is enabled, during compression all other requests will wait until the compressing
      * process has completed. If disabled, the uncompressed files will be delivered for these
      * requests. This should prevent the thundering herd problem.
@@ -92,7 +99,7 @@ class PackageCompressor extends CClientScript
 
         $info       = array();
         $am         = Yii::app()->assetManager;
-        $basePath   = Yii::getPathOfAlias('webroot');
+        $basePath   = realpath(Yii::getPathOfAlias('webroot'));
 
         // /www/root/sub -> /www/root   (baseUrl=/sub)
         if(($baseUrl = Yii::app()->request->baseUrl)!=='')
@@ -134,8 +141,17 @@ class PackageCompressor extends CClientScript
         {
             $files  = array();
             $urls   = array();
-            foreach(array_keys($this->cssFiles) as $file)
-                $files[] = $basePath.$file;
+
+            foreach(array_keys($this->cssFiles) as $file) {
+                if ($this->rewriteCssUris) {
+                    $inFile = $basePath.$file;
+                    $outFile = $basePath.$file.'-rewrite.css';
+                    file_put_contents($outFile, Minify_CSS_UriRewriter::rewrite(file_get_contents($inFile), dirname($inFile), $basePath));
+                } else {
+                    $outFile = $basePath.$file;
+                }
+                $files[] = $outFile;
+            }
 
             $fileName = $this->compressFiles($name,'css',$files);
             if(isset($this->packages[$name]['baseUrl']))
