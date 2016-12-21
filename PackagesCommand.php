@@ -138,7 +138,7 @@ EOD;
             {
                 echo "\n  The files used to create the compressed file where:\n\n";
                 foreach($info['js']['files'] as $k=>$v)
-                    echo $colors->getColoredString("    $v \n",self::COLOR_SOURCE);
+                    echo $colors->getColoredString("    ".realpath($v)." \n",self::COLOR_SOURCE);
             }
 
             if(isset($info['js']['coreScripts']))
@@ -162,7 +162,7 @@ EOD;
             {
                 echo "\n  The files used to create the compressed file where:\n\n";
                 foreach($info['css']['files'] as $k=>$v)
-                    echo $colors->getColoredString("    $v \n",self::COLOR_SOURCE);
+                    echo $colors->getColoredString("    ".realpath($v)." \n",self::COLOR_SOURCE);
             }
             echo "-------------------------------------------------------\n";
         }
